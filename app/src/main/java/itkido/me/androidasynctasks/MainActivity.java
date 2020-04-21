@@ -11,24 +11,28 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-    private Button button;
-    private EditText time;
-    private TextView finalResult;
+    TextView txtTitle;
+    EditText editText;
+    TextView txtDisplayEnteredText;
+    Button btnDisplayText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        time = findViewById(R.id.in_time);
-        button = findViewById(R.id.btn_run);
-        finalResult = findViewById(R.id.tv_result);
-        button.setOnClickListener(new View.OnClickListener() {
+        txtTitle = findViewById(R.id.txtTitle);
+        editText = findViewById(R.id.editText);
+        txtDisplayEnteredText = findViewById(R.id.txtDisplayEnteredText);
+        btnDisplayText = findViewById(R.id.btnDisplayText);
+
+        btnDisplayText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AsyncTaskRunner runner = new AsyncTaskRunner();
-                String sleepTime = time.getText().toString();
+                String sleepTime = "3";
                 runner.execute(sleepTime);
             }
         });
+
     }
 
     private class AsyncTaskRunner extends AsyncTask<String, String, String> {
@@ -43,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
                 int time = Integer.parseInt(params[0])*1000;
 
                 Thread.sleep(time);
-                resp = "Slept for " + params[0] + " seconds";
+                //resp = "Slept for " + params[0] + " seconds";
+                resp = editText.getText().toString();
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 resp = e.getMessage();
@@ -56,24 +61,22 @@ public class MainActivity extends AppCompatActivity {
 
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(String textEntered) {
             // execution of result of Long time consuming operation
             progressDialog.dismiss();
-            finalResult.setText(result);
+            txtDisplayEnteredText.setText(textEntered);
         }
 
 
         @Override
         protected void onPreExecute() {
             progressDialog = ProgressDialog.show(MainActivity.this,
-                    "ProgressDialog",
-                    "Wait for "+time.getText().toString()+ " seconds");
+                    "Waiting",
+                    "Wait for "+ "3" + " seconds");
         }
-
 
         @Override
         protected void onProgressUpdate(String... text) {
-            finalResult.setText(text[0]);
 
         }
     }
